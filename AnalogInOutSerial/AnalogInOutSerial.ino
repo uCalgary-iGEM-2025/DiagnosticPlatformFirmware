@@ -36,12 +36,12 @@ int sensorValue = 0;  // value read from the pot
 int outputValue = 0;  // value output to the PWM (analog out)
 
 NetworkServer server(80);
-void getData(){
-    sensorValue = analogRead(analogInPin);
-    // map it to the range of the analog out:
-    outputValue = map(sensorValue, 0, 1023, 0, 255);
-    // client.println(outputValue);
-}
+// void getData(){
+//     sensorValue = analogRead(analogInPin);
+//     // map it to the range of the analog out:
+//     outputValue = map(sensorValue, 0, 1023, 0, 255);
+//     // client.println(outputValue);
+// }
 void setup() {
   // initialize serial communications at 115200 bps:
     Serial.begin(115200);
@@ -58,7 +58,7 @@ void setup() {
 
     WiFi.begin(ssid, password);
 
-    while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
       delay(500);
       Serial.print("Not Connected\r\n");
   }
@@ -112,48 +112,56 @@ void loop() {
           
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the client HTTP request, so send a response:
-          if (currentLine.length() == 0) {
+          // if (currentLine.length() == 0) {
 
             if (request.indexOf("GET /data") >= 0) {
-              sensorValue = analogRead(analogInPin);
-              outputValue = map(sensorValue, 0, 1023, 0, 255);
+              // sensorValue = analogRead(analogInPin);
+              // outputValue = map(sensorValue, 0, 1023, 0, 255);
 
               client.print("HTTP/1.1 200 OK\r\n");
-              client.print("Content-type:text/plain\r\n");
-              client.print("Connection: close\r\n");
-              client.print("\r\n");
+              client.print("Content-type: text/plain\r\n\r\n");
+              // client.print("Connection: close\r\n");
+              // client.print("\r\n");
               client.print(String(outputValue));
             } else {
 
               // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
               // and a content-type so the client knows what's coming, then a blank line:
               client.print("HTTP/1.1 200 OK\r\n");
-              client.print("Content-type:text/html \r\n");
-              client.print("\r\n");
+              client.print("Content-type:text/html \r\n\r\n");
+              // client.print("\r\n");
 
               // the content of the HTTP response follows the header:
-              client.print("<!DOCTYPE html><html><head><title>Live Sensor</title></head><body>");
+              client.print("<!DOCTYPE html><html><head><title>Live Sensor</title>");
+              client.print("<style>body{font-family:sans-serif;text-align:center;}#value{font-size:2em;color:green;}</style>");
+              client.print("</head><body>");
+
               client.print("<h1>Live Sensor Value</h1>");
               client.print("<div id='value'>Loading...</div>");
               client.print("<script>");
-              client.print("setInterval(getData(){");
-              client.print("fetch('/data').then(r=>r.text()).then(t=>document.getElementById('value').innerText = t);");
-              client.print("}, 1000);");  // fetch every second
+              client.print("function getData(){");
+              client.print("fetch('/data').then(res=>res.text()).then(data=>{");
+              client.print("document.getElementById('value').innerText = data;");
+              client.print("});}");
+              client.print("setInterval(getData, 1000);");
               client.print("</script>");
               client.print("</body></html>");
           
             }
+            break;
 
             // The HTTP response ends with another blank line:
-            client.print("\r\n");
+            // client.print("\r\n");
             // break out of the while loop:
-            break;
-          } else {  // if you got a newline, then clear currentLine:
-            currentLine = "";
+            // break;
           }
-        } else if (c != '\r') {  // if you got anything else but a carriage return character,
-          currentLine += c;      // add it to the end of the currentLine
-        }
+          //  else {  // if you got a newline, then clear currentLine:
+          //   currentLine = "";
+          // }
+        } 
+        // else if (c != '\r') {  // if you got anything else but a carriage return character,
+          // currentLine += c;      // add it to the end of the currentLine
+        // }
 
         // // Check to see if the client request was "GET /H" or "GET /L":
         // if (currentLine.endsWith("GET /H")) {
@@ -163,8 +171,9 @@ void loop() {
         // }
       }
     }
+    delay(1);
     // close the connection:
     client.stop();
     Serial.println("Client Disconnected.");
   }
-}
+//}
