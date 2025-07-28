@@ -1,4 +1,6 @@
 /*
+
+  The following is based off the code made by Tom Igoe created on Dec. 29th 2008 and modified on April 9th 2012:
   Analog input, analog output, serial output
 
   Reads an analog input pin, maps the result to a range from 0 to 255 and uses
@@ -11,22 +13,18 @@
     side pins of the potentiometer go to +5V and ground
   - LED connected from digital pin 9 to ground through 220 ohm resistor
 
-  created 29 Dec. 2008
-  modified 9 Apr 2012
-  by Tom Igoe
-
   This example code is in the public domain.
 
   https://docs.arduino.cc/built-in-examples/analog/AnalogInOutSerial/
 */
 #include <WiFi.h>
 
-// const char *ssid = "HazemDesktop";
-// const char *password = "8126D3k;";
+// change the ssid and password below with the wifi you're connecting to (make sure it's 2.4 GHz!)
+// ssid is the username
+const char *ssid = "username";
+// password is the password of your WiFi
+const char *password = "password";
 
-
-const char *ssid = "PreyeHotspot";
-const char *password = "KhadeejaIsTheBest";
 
 // These constants won't change. They're used to give names to the pins used:
 const int analogInPin = 38;  // Analog input pin that the potentiometer is attached to
